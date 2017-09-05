@@ -36,94 +36,6 @@ static int cmd_q(char *args) {
   return -1;
 }
 
-static int cmd_si(char *arg) {
-  if (arg == NULL) {
-    cpu_exec(1);
-  } else {
-    int n = atoi(arg);
-    cpu_exec(n);
-  }
-  return 0;
-}
-
-static int cmd_info(char *arg) {
-  if (arg[0] == 'r') {
-    printf("eip : %X\n", cpu.eip);
-    printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-    printf("width\t|eax       |ecx       |edx       |ebx       |esp       |ebp       |esi       |edi       |\n");
-    //printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-    int i;
-    printf("32\t|");
-    for (i = 0; i < 8; i++) {
-      printf("0x%08X|", cpu.gpr[i]._32);
-    }
-    printf("\n");
-    //printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-    printf("16\t|");
-    for (i = 0; i < 8; i++) {
-      printf("0x%04X    |", cpu.gpr[i]._16);
-    }
-    printf("\n");
-    //printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-    printf("h_8|l_8\t|");
-    for (i = 0; i < 8; i++) {
-      printf("0x%02X |0x%02X|", cpu.gpr[i]._8[1], cpu.gpr[i]._8[0]);
-    }
-    printf("\n");
-    //printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-  } else if (arg[0] == 'w') {
-
-  } else {
-    printf("Usage: info r : registers, info w : watchpoint\n");
-  }
-  return 0;
-}
-
-static int cmd_x(char *arg) {
-  char a[10] = {'\0'};
-  int i = 0;
-  int j = 0;
-  int num = 0;
-  while (arg[i] == ' ') {
-    i++;
-  }
-  for (; i < strlen(arg); i++) {
-    if (arg[i] == ' ') {
-      num = atoi(a);
-      while (arg[i] != ' ') {
-        i++;
-      }
-      break;
-    } else {
-      a[j++] = arg[i];
-    }
-  }
-  //printf("%d %s\n", n, &(arg[i]));
-  //uint32_t addr = atoi(arg[i], 16);
-  int addr = 0;
-  int t;
-  while (arg[i] != '\0') {
-    if (arg[i] == ' ') {
-      i++;
-      continue;
-    }
-    if ('0' <= arg[i] && arg[i] <= '9') {
-      t = arg[i] - '0';
-    } else {
-      t = arg[i] - 'a' + 10;
-    }
-    addr = 16 * addr + t;
-    i++;
-  }
-  //printf("%d %08X\n",  n, addr);
-  for (i = 0; i < num; i++) {
-    printf("0x%08X\t", vaddr_read(addr+4*i, 0));
-    if ((i+1) % 4 == 0) printf("\n");
-  }
-  printf("\n");
-  return 0;
-}
-
 static int cmd_help(char *args);
 
 static struct {
@@ -131,12 +43,9 @@ static struct {
   char *description;
   int (*handler) (char *);
 } cmd_table [] = {
-  { "h", "Display informations about all supported commands", cmd_help },
+  { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "si [n] : exe n times, default is 1", cmd_si },
-  { "i", "i r : registers, i w : watchpoint", cmd_info},
-  { "x", "x n expr : show the continue 4*n size memory begin with expr", cmd_x },
 
   /* TODO: Add more commands */
 
