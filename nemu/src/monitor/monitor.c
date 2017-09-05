@@ -28,7 +28,7 @@ static inline void init_log() {
 static inline void welcome() {
   printf("Welcome to NEMU!\n");
   Log("Build time: %s, %s", __TIME__, __DATE__);
-  printf("For help, type \"help\"\n");
+  printf("For help, type \"h\"\n");
 }
 
 static inline int load_default_img() {
