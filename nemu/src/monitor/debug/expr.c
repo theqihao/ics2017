@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <regex.h>
 
+uint32_t expr_error = 0;
+
 enum {
   TK_NOTYPE = 256, 
   
@@ -99,7 +101,7 @@ static bool make_token(char *e) {
 
   while (e[position] != '\0') {
     /* Try all rules one by one. */
-    for (i = 0; i < NR_REGEX; i ++) {
+    for (i = 0; i < NR_REGEX; i++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
@@ -130,7 +132,7 @@ static bool make_token(char *e) {
           case TK_OR: tokens[nr_token].type = TK_OR; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
           case TK_NOT: tokens[nr_token].type = TK_NOT; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
           //case TK_V: tokens[nr_token].type = TK_V; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
-          default: assert(0);
+          default: expr_error = 1; /* assert(0); */
         }
         break;
       }
@@ -253,7 +255,10 @@ uint32_t get_op_pos(uint32_t p, uint32_t q) {
     }
   }
   if (MYDEBUG) printf("pos = %d\n", pos);
-  if (pos < 0) assert(0);
+  if (pos < 0) {
+    expr_error = 1; 
+    return -1; /* assert(0); */
+  }
   return pos;
 }
 
@@ -262,7 +267,8 @@ uint32_t eval(uint32_t p, uint32_t q) {
   print_tokens(p, q);
   if (p > q) {
     /* Bad expression */
-    assert(0);
+    expr_error = 1; 
+    return 1; /* assert(0); */
   }
   else if (p == q) {
     /* Single token.
@@ -282,6 +288,9 @@ uint32_t eval(uint32_t p, uint32_t q) {
   else {
     if (MYDEBUG) printf("begin get op\n");
     uint32_t op = get_op_pos(p, q);
+    if (op == -1) {
+      return 1;
+    }
     int op_type = tokens[op].type;
     if (MYDEBUG) printf("pos = %d %1X\n", op, op_type);
     if (op_type == TK_NOT || op_type == TK_NEG || op_type == TK_V) {
@@ -291,7 +300,7 @@ uint32_t eval(uint32_t p, uint32_t q) {
         case TK_NOT: return (!val2);
         case TK_NEG: return (-val2);
         case TK_V:   return vaddr_read(val2, 0);
-        default: assert(0);
+        default: expr_error = 1; return 1; /* assert(0); */
       }
     }
 
@@ -307,7 +316,7 @@ uint32_t eval(uint32_t p, uint32_t q) {
       case TK_NEQ: return (val1 != val2);
       case TK_AND: return (val1 && val2);
       case TK_OR: return (val1 || val2);
-      default: assert(0);
+      default: expr_error = 1; return 0; /* assert(0); */
     }
   }
 }
@@ -317,6 +326,7 @@ uint32_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
+  expr_error = 0;
   // for the overload and single op //  TK_INT TK_REG,
   int i = 0;
   for (i = 0; i < nr_token; i ++) {
@@ -328,6 +338,11 @@ uint32_t expr(char *e, bool *success) {
   }
   /* TODO: Insert codes to evaluate the expression. */
   uint32_t ans = eval(0, nr_token-1);
-  *success = true;
+  if (expr_error == 0) {
+    *success = true;
+  } else {
+    *success = false;
+  }
+  
   return ans;
 }

@@ -49,6 +49,8 @@ static int cmd_si(char *arg) {
 static int cmd_info(char *arg) {
   if (arg[0] == 'r') {
     printf("eip : %X\n", cpu.eip);
+    printf("flags : %X\n", cpu.flags);
+    printf("CF: %d ZF: %d SF: %d IF: %d OF: %d\n", cpu.CF, cpu.ZF, cpu.SF, cpu.IF, cpu.OF);
     printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
     printf("width\t|eax       |ecx       |edx       |ebx       |esp       |ebp       |esi       |edi       |\n");
     //printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
@@ -103,6 +105,10 @@ static int cmd_x(char *arg) {
   bool sucess = -1;
   char* p = &arg[i];
   uint32_t addr = expr(p, &sucess);
+  if (sucess == false) {
+    printf("expr hander error\n");
+    return 0;
+  }
   //printf("%d %08X\n",  n, addr);
   for (i = 0; i < num; i++) {
     printf("0x%08X\t", vaddr_read(addr+4*i, 0));
@@ -116,13 +122,13 @@ static int cmd_p(char *args) {
   printf("%s\n", args);
   bool sucess = -1;
   uint32_t ans =  expr(args, &sucess);
+  if (sucess == false) {
+    printf("expr hander error\n");
+    return 0;
+  }
   printf("%d\n", ans);
   printf("%08X\n", ans);
-  if (sucess == true) {
-    return 0;
-  } else {
-    return -1;
-  }
+  return 0;
 }
 
 static int cmd_w(char *args) {
