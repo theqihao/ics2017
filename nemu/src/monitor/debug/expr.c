@@ -19,11 +19,17 @@ enum {
   TK_RP,
 
   TK_EQ,
+  TK_DY,
+  TK_XY,
   TK_NEQ,
   TK_AND,
   TK_OR,
 
+
   TK_LP,
+
+
+
   
   TK_PLUS,
   TK_MIN,
@@ -46,7 +52,7 @@ static struct rule {
 
   {" +", TK_NOTYPE},    // spaces
  // {"\\-", TK_NEG},         // neg
-  {"([0-9]+)|(0x[0-9a-fA-F]+)", TK_INT}, // int
+  {"([0-9]+)|(0x[0-9a-fA-F]+)|(0X[0-9a-fA-F]+)", TK_INT}, // int
   {"\\%[a-z]{3}", TK_REG},             // register
   {"\\(", TK_LP},         
   {"\\)", TK_RP}, 
@@ -59,6 +65,8 @@ static struct rule {
   {"\\&\\&", TK_AND},       // and
   {"\\|\\|", TK_OR},        // or 
   {"\\!", TK_NOT},        // not 
+  {">", TK_DY},
+  {"<", TK_XY},
   //{"\\*", TK_V},          // value  
 
 };
@@ -131,6 +139,9 @@ static bool make_token(char *e) {
           case TK_AND: tokens[nr_token].type = TK_AND; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
           case TK_OR: tokens[nr_token].type = TK_OR; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
           case TK_NOT: tokens[nr_token].type = TK_NOT; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
+          case TK_DY: tokens[nr_token].type = TK_DY; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
+          case TK_XY: tokens[nr_token].type = TK_XY; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
+
           //case TK_V: tokens[nr_token].type = TK_V; memcpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
           default: expr_error = 1; /* assert(0); */
         }
@@ -168,6 +179,7 @@ uint32_t get_num(char* a) {
     else if (strcmp(a, "%esi") == 0) return cpu.esi;
     else if (strcmp(a, "%edi") == 0) return cpu.edi;
     else if (strcmp(a, "%eip") == 0) return cpu.eip;
+    else if (strcmp(a, "%fls") == 0) return cpu.flags;
     else assert(0);
   } else if (a[0] == '0' && a[1] == 'x') {
     int n = 0;
@@ -316,6 +328,8 @@ uint32_t eval(uint32_t p, uint32_t q) {
       case TK_NEQ: return (val1 != val2);
       case TK_AND: return (val1 && val2);
       case TK_OR: return (val1 || val2);
+      case TK_DY: return (val1 > val2);
+      case TK_XY: return (val1 < val2);
       default: expr_error = 1; return 0; /* assert(0); */
     }
   }

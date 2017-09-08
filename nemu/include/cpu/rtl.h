@@ -111,12 +111,17 @@ static inline void rtl_sr(int r, int width, const rtlreg_t* src1) {
   }
 }
 
+/*
+cpu.f = *src; 
+*dest = cpu.f;
+*/
+
 #define make_rtl_setget_eflags(f) \
   static inline void concat(rtl_set_, f) (const rtlreg_t* src) { \
-    TODO(); \
+    cpu.f = *src; \
   } \
   static inline void concat(rtl_get_, f) (rtlreg_t* dest) { \
-    TODO(); \
+    *dest = cpu.f; \
   }
 
 make_rtl_setget_eflags(CF)
@@ -126,24 +131,48 @@ make_rtl_setget_eflags(SF)
 
 static inline void rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
   // dest <- src1
-  TODO();
+  // TODO();
+  *dest = *src1;
 }
 
 static inline void rtl_not(rtlreg_t* dest) {
   // dest <- ~dest
-  TODO();
+  // TODO();
+  *dest = ~(*dest);
 }
 
 static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- signext(src1[(width * 8 - 1) .. 0])
-  TODO();
+  // TODO();
+  /* rtl_shl(&t0, 0x00000001, width*8); */
+  switch(width) {
+    case 1: rtl_andi(&t0, src1, 0x00000080);
+            if (t0 == 0) {
+              rtl_andi(dest, src1, 0x000000ff);
+            } else {
+              rtl_ori(dest, src1, 0xffffff00);
+            }
+            break;
+    case 2: rtl_andi(&t0, src1, 0x00008000);
+            if (t0 == 0) {
+              rtl_andi(dest, src1, 0x0000ffff);
+            } else {
+              rtl_ori(dest, src1, 0xffff0000);
+            }
+            break;
+    case 4: rtl_li(dest, *src1);
+            break;
+    default: printf("rtl_sext error!!! width = %d\n", width);
+  }
 }
 
 static inline void rtl_push(const rtlreg_t* src1) {
   // esp <- esp - 4
   // M[esp] <- src1
   // TODO();
-  cpu.esp = cpu.esp - 4;
+  /* cpu.esp = cpu.esp - 4; */
+  rtl_li(&t0, 4);
+  rtl_sub(&cpu.esp, &cpu.esp, &t0);
   vaddr_write(cpu.esp, 4, *src1);
 }
 
@@ -152,38 +181,70 @@ static inline void rtl_pop(rtlreg_t* dest) {
   // esp <- esp + 4
   // TODO();
   *dest = vaddr_read(cpu.esp, 4);
-  printf("pop =  %x\n", *dest);
-  cpu.esp = cpu.esp + 4;
+  rtl_li(&t0, 4);
+  rtl_add(&cpu.esp, &cpu.esp, &t0);
+  /* cpu.esp = cpu.esp + 4; */
 }
 
 static inline void rtl_eq0(rtlreg_t* dest, const rtlreg_t* src1) {
   // dest <- (src1 == 0 ? 1 : 0)
-  TODO();
+  // TODO();
+  *dest = (*src1 == 0) ? 1 : 0;
 }
 
 static inline void rtl_eqi(rtlreg_t* dest, const rtlreg_t* src1, int imm) {
   // dest <- (src1 == imm ? 1 : 0)
-  TODO();
+  // TODO();
+  *dest = (*src1 == imm) ? 1 : 0;
 }
 
 static inline void rtl_neq0(rtlreg_t* dest, const rtlreg_t* src1) {
   // dest <- (src1 != 0 ? 1 : 0)
-  TODO();
+  // TODO();
+  rtl_eq0(dest, src1);
+  *dest = !*dest;
 }
 
 static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- src1[width * 8 - 1]
-  TODO();
+  // TODO();
+  switch (width) {
+    case 1: rtl_andi(dest, src1, 0x000000ff); break;
+    case 2: rtl_andi(dest, src1, 0x0000ffff); break;
+    case 4: rtl_andi(dest, src1, 0xffffffff); break;
+    default : printf("rtl_msb error!!! width = %d\n", width);
+  }
+  rtl_shri(dest, dest, width-1);
 }
 
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
-  TODO();
+  // TODO();
+  rtl_li(&t1, 0x00000001);
+  switch (width) {
+    case 1: rtl_andi(&t3, result, 0x000000ff); break;
+    case 2: rtl_andi(&t3, result, 0x0000ffff); break;
+    case 4: rtl_andi(&t3, result, 0xffffffff); break;
+    default : printf("rtl_update_ZF error!!! width = %d\n", width);
+  }
+  //printf("rtl_update_ZF result = %08X, width = %d\n", *result, width);
+  if (t3 == 0) rtl_set_ZF(&t1); 
+  else rtl_set_ZF(&tzero); 
 }
 
 static inline void rtl_update_SF(const rtlreg_t* result, int width) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
-  TODO();
+  // TODO();
+  rtl_li(&t1, 0x00000001);
+  rtl_li(&t0, 0x00000001);
+  rtl_shli(&t0, &t0, 8*width-1);
+  rtl_and(&t0, &t0, result);
+  //printf("result = %08X, width = %d\n", *result, width);
+  if (t0 == 0) {
+    rtl_set_SF(&tzero);
+  } else {
+    rtl_set_SF(&t1);
+  }
 }
 
 static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {

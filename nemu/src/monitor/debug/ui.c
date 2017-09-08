@@ -119,6 +119,9 @@ static int cmd_x(char *arg) {
 }
 
 static int cmd_p(char *args) {
+  if (args == NULL) {
+    return 0;
+  }
   printf("%s\n", args);
   bool sucess = -1;
   uint32_t ans =  expr(args, &sucess);

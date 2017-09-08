@@ -29,16 +29,15 @@ make_EHelper(call) {
   //decoding.jmp_eip = id_dest->simm + *eip;
   uint32_t temp = cpu.eip + 1 + 4;
   rtl_push(&temp);
-
   print_asm("call %x", decoding.jmp_eip);
 }
 
 make_EHelper(ret) {
   // TODO();
-  rtl_pop(&cpu.eip);
+  rtl_pop(&t2);
   decoding.is_jmp = 1;
-  decoding.jmp_eip = cpu.eip;
-  printf("%X\n", cpu.eip);
+  decoding.jmp_eip = t2;
+  // printf("%X\n", t2);
   print_asm("ret");
 }
 
