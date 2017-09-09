@@ -30,17 +30,33 @@ make_EHelper(popa) {
 }
 
 make_EHelper(leave) {
-  TODO();
-
+  // TODO();
+  rtl_sr_l(R_ESP, &cpu.ebp);
+  rtl_pop(&cpu.ebp);
   print_asm("leave");
 }
 
 make_EHelper(cltd) {
   if (decoding.is_operand_size_16) {
-    TODO();
+    // TODO();
+    rtl_lr_w(&t0, R_AX);
+    rtl_sext(&t0, &t0, 2);
+    if ((int)t0 < 0) {
+      rtl_li(&t1, 0xffff);
+      rtl_sr_w(R_DX, &t1);
+    } else {
+      rtl_sr_w(R_DX, &tzero);
+    }
   }
   else {
-    TODO();
+    // TODO();
+    rtl_lr_l(&t0, R_EAX);
+    if ((int)t0 < 0) {
+      rtl_li(&t1, 0xffffffff);
+      rtl_sr_l(R_EDX, &t1);
+    } else {
+      rtl_sr_l(R_EDX, &tzero);
+    }
   }
 
   print_asm(decoding.is_operand_size_16 ? "cwtl" : "cltd");

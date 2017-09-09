@@ -214,7 +214,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
     case 4: rtl_andi(dest, src1, 0xffffffff); break;
     default : printf("rtl_msb error!!! width = %d\n", width);
   }
-  rtl_shri(dest, dest, width-1);
+  rtl_shri(dest, dest, width*8-1);
 }
 
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
