@@ -33,6 +33,17 @@ void diff_test_skip_nemu() { is_skip_nemu = true; }
     regs.eip = cpu.eip; \
   } while (0)
 
+#define is_equal(a, b) \
+    a.eax == b.eax && \
+    a.ecx == b.ecx && \
+    a.edx == b.edx && \
+    a.ebx == b.ebx && \
+    a.esp == b.esp && \
+    a.ebp == b.ebp && \
+    a.esi == b.esi && \
+    a.edi == b.edi && \
+    a.eip == b.eip
+
 static uint8_t mbr[] = {
   // start16:
   0xfa,                           // cli
@@ -149,7 +160,16 @@ void difftest_step(uint32_t eip) {
 
   // TODO: Check the registers state with QEMU.
   // Set `diff` as `true` if they are not the same.
-  TODO();
+  // TODO();
+  union gdb_regs nr;
+  regcpy_from_nemu(nr);
+  if (is_equal(r, nr)) {
+    diff = false;
+  } else {
+    diff = true;
+    printf("there is diff\n");
+  }
+
 
   if (diff) {
     nemu_state = NEMU_END;

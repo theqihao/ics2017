@@ -112,9 +112,6 @@ static int cmd_x(char *arg) {
   //printf("%d %08X\n",  n, addr);
   for (i = 0; i < num; i++) {
     printf("0x%08X\t", vaddr_read(addr+4*i, 0));
-    printf("0x%08X\t", vaddr_read(addr+4*i, 1));
-    printf("0x%08X\t", vaddr_read(addr+4*i, 2));
-    printf("0x%08X\t", vaddr_read(addr+4*i, 4));
     if ((i+1) % 4 == 0) printf("\n");
   }
   printf("\n");
