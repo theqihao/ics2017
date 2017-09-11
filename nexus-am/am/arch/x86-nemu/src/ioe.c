@@ -14,17 +14,36 @@ unsigned long _uptime() {
 
 uint32_t* const fb = (uint32_t *)0x40000;
 
+
 _Screen _screen = {
   .width  = 400,
   .height = 300,
 };
 
+/*
+_Screen _screen = {
+  .width  = 320,
+  .height = 200,
+};
+
+memcpy((void *)(fb+(y+i)*_screen.height+x), (const void *)(pixels+i*w), w*4);
+*/
+
+
 extern void* memcpy(void *, const void *, int);
 
 void _draw_rect(const uint32_t *pixels, int x, int y, int w, int h) {
-  int i;
+  int i, j;
+  /*
   for (i = 0; i < _screen.width * _screen.height; i++) {
     fb[i] = i;
+  }
+  */
+  int k = 0;
+  for (i = y; i < y+h; i++) {
+    for (j = x; j < x+w; j++) {
+      fb[_screen.width*i+j] = pixels[k++];
+    } 
   }
 }
 
@@ -32,13 +51,9 @@ void _draw_sync() {
 }
 
 int _read_key() {
-	/*
 	if (inb(0x64) == 0x1) {
-		outb(0x64, 0x1);
-		return inb(0x60);
+		return inl(0x60);
 	} else {
 		return _KEY_NONE;
 	}
-	*/
-	return (int) inb(0x60);
 }

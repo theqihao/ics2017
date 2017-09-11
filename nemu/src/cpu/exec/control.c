@@ -39,6 +39,12 @@ make_EHelper(ret) {
   decoding.jmp_eip = t2;
   // printf("%X\n", t2);
   print_asm("ret");
+
+  if (id_dest->width == 2) {
+    rtl_add(&cpu.esp, &cpu.esp, &id_dest->val);
+    print_asm(" %x", id_dest->val);
+  }
+  
 }
 
 make_EHelper(call_rm) {
