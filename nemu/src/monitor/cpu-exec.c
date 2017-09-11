@@ -2,6 +2,7 @@
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
 #include "monitor/monitor.h"
+#include "monitor/loop.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -34,7 +35,16 @@ void cpu_exec(uint64_t n) {
     //printf("old\tnew\texpr\n");
     int flag = check_wp();
     if (flag) {
-        nemu_state = NEMU_STOP;
+      nemu_state = NEMU_STOP;
+    }
+
+#endif
+
+#ifdef DEBUG_LOOP
+    // printf("judge loop\n");
+    if (new_eip(cpu.eip) == false) {
+      nemu_state = NEMU_STOP;
+      printf("loooooooooooop\n");
     }
 #endif
 

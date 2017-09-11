@@ -44,6 +44,17 @@ void diff_test_skip_nemu() { is_skip_nemu = true; }
     a.edi == b.edi && \
     a.eip == b.eip
 
+#define print(a, b) \
+    printf("%%eax = %08X : %08X\n", a.eax, b.eax); \
+    printf("%%ecx = %08X : %08X\n", a.ecx, b.ecx); \
+    printf("%%edx = %08X : %08X\n", a.edx, b.edx); \
+    printf("%%ebx = %08X : %08X\n", a.ebx, b.ebx); \
+    printf("%%esp = %08X : %08X\n", a.esp, b.esp); \
+    printf("%%ebp = %08X : %08X\n", a.ebp, b.ebp); \
+    printf("%%esi = %08X : %08X\n", a.esi, b.esi); \
+    printf("%%edi = %08X : %08X\n", a.edi, b.edi); \
+    printf("%%eip = %08X : %08X\n", a.eip, b.eip);
+
 static uint8_t mbr[] = {
   // start16:
   0xfa,                           // cli
@@ -167,7 +178,8 @@ void difftest_step(uint32_t eip) {
     diff = false;
   } else {
     diff = true;
-    printf("there is diff\n");
+    printf("there is diff, eip = 0x%0x\n", cpu.eip);
+    print(r, nr);
   }
 
 

@@ -59,3 +59,15 @@ make_EHelper(sbb);
 make_EHelper(call_rm);
 make_EHelper(jmp_rm);
 make_EHelper(shr);
+
+/* hello */
+make_EHelper(in);
+make_EHelper(out);
+
+/* coremark */
+make_EHelper(mul);
+make_EHelper(cwtl);
+
+/* microbench */
+make_EHelper(neg);
+make_EHelper(rol);

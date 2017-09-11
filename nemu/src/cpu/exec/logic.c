@@ -70,6 +70,24 @@ make_EHelper(shl) {
   print_asm_template2(shl);
 }
 
+make_EHelper(rol) {
+  // TODO();
+  // unnecessary to update CF and OF in NEMU
+
+  rtl_shl(&t2, &id_dest->val, &id_src->val);
+  // printf("%08X << %08X\n", id_dest->val, id_src->val);
+  // printf("%0X\n", (~0u) >> (32-id_src->val));
+  rtl_shri(&t1, &id_dest->val, (32-id_src->val));
+
+  // printf("%0X\n", t1);
+  rtl_or(&t2, &t2, &t1);
+  // printf("%0X\n", t2);
+  operand_write(id_dest, &t2);
+
+  rtl_update_ZFSF(&t2, id_dest->width);
+  print_asm_template2(shl);
+}
+
 make_EHelper(shr) {
   // TODO();
   // unnecessary to update CF and OF in NEMU
