@@ -4,8 +4,12 @@ void diff_test_skip_qemu();
 void diff_test_skip_nemu();
 
 make_EHelper(lidt) {
-  TODO();
-
+  // TODO();
+  // printf("lidt\n");
+  // rtl_lm(&cpu.idtr, &id_dest->addr, id_dest->width);
+  rtl_li(&cpu.idtr, id_dest->val);
+  //printf("id_dest->addr = %08x, id_dest->val  = %08x\n", id_dest->addr, id_dest->val);
+  //printf("cpu.idtr = %08x, t2  = %08x\n", cpu.idtr, t2);
   print_asm_template1(lidt);
 }
 
@@ -26,8 +30,8 @@ make_EHelper(mov_cr2r) {
 }
 
 make_EHelper(int) {
-  TODO();
-
+  // TODO();
+  raise_intr(id_dest->val, cpu.eip+2);
   print_asm("int %s", id_dest->str);
 
 #ifdef DIFF_TEST
@@ -36,7 +40,13 @@ make_EHelper(int) {
 }
 
 make_EHelper(iret) {
-  TODO();
+  // TODO();
+  decoding.is_jmp = 1;
+
+  rtl_pop(&t2);
+  decoding.jmp_eip = t2;
+  rtl_pop(&cpu.cs);
+  rtl_pop(&cpu.flags);
 
   print_asm("iret");
 }

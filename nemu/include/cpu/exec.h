@@ -2,6 +2,7 @@
 #define __CPU_EXEC_H__
 
 #include "nemu.h"
+void raise_intr(uint8_t NO, vaddr_t ret_addr);
 
 #define make_EHelper(name) void concat(exec_, name) (vaddr_t *eip)
 typedef void (*EHelper) (vaddr_t *);

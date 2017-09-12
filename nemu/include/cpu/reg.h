@@ -51,7 +51,8 @@ typedef struct {
     uint32_t flags;
   };
 
-
+  rtlreg_t idtr;
+  rtlreg_t cs;
 } CPU_state;
 
 extern CPU_state cpu;

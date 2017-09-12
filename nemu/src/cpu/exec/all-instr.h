@@ -71,3 +71,10 @@ make_EHelper(cwtl);
 /* microbench */
 make_EHelper(neg);
 make_EHelper(rol);
+
+/* int */
+make_EHelper(lidt);
+make_EHelper(int);
+make_EHelper(pusha);
+make_EHelper(popa);
+make_EHelper(iret);
