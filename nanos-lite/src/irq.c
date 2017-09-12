@@ -1,5 +1,6 @@
 #include "common.h"
-#include "syscall.h"
+
+extern _RegSet* do_syscall(_RegSet *r);
 
 /*
 am.h

@@ -29,8 +29,9 @@ int main() {
 #endif
 
   init_fs();
-
-  uint32_t entry = loader(NULL, NULL);
+  Log("loader before...");
+  uint32_t entry = loader(NULL, "/bin/text");
+  Log("loader after...");
   ((void (*)(void))entry)();
 
   panic("Should not reach here");
