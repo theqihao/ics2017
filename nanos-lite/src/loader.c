@@ -10,6 +10,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
   int len = fs_filesz(fd);
   fs_read(fd, DEFAULT_ENTRY, len);
   printf("load file name : %s, fd = %d, len = %d\n", filename, fd, len);
+  fs_close(fd);
 	//ramdisk_read(DEFAULT_ENTRY, 0, get_ramdisk_size());
   return (uintptr_t)DEFAULT_ENTRY;
 }

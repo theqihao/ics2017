@@ -16,16 +16,15 @@ void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
   switch (subcode & 0xe) {
   // switch (subcode & 0xf) {
     case CC_O: *dest = cpu.OF; break;
-    case CC_NO:
+    case CC_NO: *dest = (cpu.OF == 0 ? 1 : 0); break;
     case CC_B: *dest = cpu.CF; break;
     case CC_NB: *dest = (cpu.CF == 0 ? 1 : 0); break;
     case CC_E: *dest = cpu.ZF; break; 
-    case CC_NE: *dest = !cpu.ZF; break;
+    case CC_NE: *dest = (cpu.ZF == 0 ? 1 : 0); break;
     case CC_BE: *dest = cpu.CF || cpu.ZF; break;
     case CC_NBE: *dest = (cpu.CF == 0) && (cpu.ZF == 0); break;
     case CC_S: *dest = cpu.SF; break;
     case CC_NS: *dest = (cpu.SF == 0 ? 1 : 0); break;
-    case CC_NP:
     case CC_L: *dest = (cpu.OF == cpu.SF ? 0 : 1); break;
     case CC_NL: *dest = (cpu.OF == cpu.SF ? 1 : 0); break;
     case CC_LE: if (cpu.ZF == 1 || cpu.SF != cpu.OF) {

@@ -28,7 +28,7 @@ static inline make_DopHelper(I) {
  */
 /* sign immediate */
 static inline make_DopHelper(SI) {
-  assert(op->width == 1 || op->width == 4);
+  assert(op->width == 1 || op->width == 2 || op->width == 4);
 
   op->type = OP_TYPE_IMM;
 
@@ -142,6 +142,8 @@ make_DHelper(I2a) {
   decode_op_a(eip, id_dest, true);
   decode_op_I(eip, id_src, true);
 }
+
+
 
 /* Gv <- EvIb
  * Gv <- EvIv

@@ -13,4 +13,11 @@ int fs_close(int fd);
 size_t fs_filesz(int fd);
 
 
+
+
+void dispinfo_read(void *buf, off_t offset, size_t len);
+void fb_write(const void *buf, off_t offset, size_t len);
+size_t events_read(void *buf, size_t len);
+
+
 #endif

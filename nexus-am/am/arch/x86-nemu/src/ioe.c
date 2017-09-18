@@ -22,8 +22,8 @@ _Screen _screen = {
 
 /*
 _Screen _screen = {
-  .width  = 320,
-  .height = 200,
+  .width  = 800,
+  .height = 600,
 };
 
 memcpy((void *)(fb+(y+i)*_screen.height+x), (const void *)(pixels+i*w), w*4);
