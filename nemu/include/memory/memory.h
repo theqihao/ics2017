@@ -2,6 +2,7 @@
 #define __MEMORY_H__
 
 #include "common.h"
+#include "mmu.h"
 
 extern uint8_t pmem[];
 

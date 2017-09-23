@@ -48,6 +48,7 @@ static int cmd_si(char *arg) {
 
 static int cmd_info(char *arg) {
   if (arg[0] == 'r') {
+    printf("cr0 : %X, cr3 : %08X\n", cpu.cr0, cpu.cr3);
     printf("eip : %X\n", cpu.eip);
     printf("flags : %X\n", cpu.flags);
     printf("CF: %d ZF: %d SF: %d IF: %d OF: %d\n", cpu.CF, cpu.ZF, cpu.SF, cpu.IF, cpu.OF);

@@ -32,15 +32,25 @@ int _write(int fd, void *buf, size_t count){
   //_exit(SYS_write);
 }
 
-
+extern char end;
 void *_sbrk(intptr_t increment){
-  if (increment == 0) {
+
+/*  if (increment == 0) {
     return (void *)_syscall_(SYS_brk, 0, 0, 0);
   }
   uint32_t old_pb = _syscall_(SYS_brk, 0, 0, 0);
   uint32_t new_pb = old_pb+increment;
   _syscall_(SYS_brk, new_pb, 0, 0);
-  return (void *)old_pb;
+  return (void *)old_pb;*/
+
+  static uintptr_t pb = &end;
+  uintptr_t old_pb = pb;
+  if (_syscall_(SYS_brk, &pb, increment, 0) == 0) {
+    return (void *)old_pb;
+  }
+  else {
+    return (void *)-1;
+  }
 }
 
 int _read(int fd, void *buf, size_t count) {

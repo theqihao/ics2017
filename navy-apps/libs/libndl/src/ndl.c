@@ -18,7 +18,13 @@ int NDL_OpenDisplay(int w, int h) {
 
   canvas_w = w;
   canvas_h = h;
+
+
+  printf("malloc before\n");
   canvas = malloc(sizeof(uint32_t) * w * h);
+
+  printf("malloc, addr = %08X, size = %08X\n", canvas, sizeof(uint32_t) * w * h);
+
   assert(canvas);
 
   if (getenv("NWM_APP")) {

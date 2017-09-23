@@ -28,14 +28,25 @@ int sys_write(int fd, void *buf, size_t count) {
 */
 }
 
+
+
+/*
 extern char end;
-uint32_t pb = (uint32_t)&end;
+static uint32_t pb = (uint32_t)&end;
+int mm_brk(uint32_t new_brk);
 uint32_t sys_brk(uint32_t addr) {
 	if (addr == 0) {
 		return pb;
 	}
-	pb = addr;
-	return 0;
+	*(uint32_t *)pb = addr;
+	return mm_brk(addr);
+}
+*/
+int mm_brk(uint32_t new_brk);
+uint32_t sys_brk(uintptr_t addr, uintptr_t inc) {
+	*(uintptr_t *)addr = *(uintptr_t *)addr + inc;
+	uint32_t new_brk = *(uintptr_t *)addr;
+	return mm_brk(new_brk);
 }
 
 int sys_open(char *pathname) {
@@ -66,7 +77,7 @@ _RegSet* do_syscall(_RegSet *r) {
   	case SYS_none : SYSCALL_ARG1(r) = sys_none(); break;
   	case SYS_exit : sys_exit(); break;
   	case SYS_write: SYSCALL_ARG1(r) = sys_write((int)a[1], (void *)a[2], (size_t)a[3]); break;
-  	case SYS_brk: SYSCALL_ARG1(r) = sys_brk((uint32_t)a[1]); break;
+  	case SYS_brk: SYSCALL_ARG1(r) = sys_brk((uintptr_t)a[1], (uintptr_t)a[2]); break;
   	case SYS_open: SYSCALL_ARG1(r) = sys_open((char *)a[1]) ; break;
   	case SYS_read: SYSCALL_ARG1(r) = sys_read((int)a[1], (void *)a[2], (size_t)a[3]); break;
   	case SYS_lseek: SYSCALL_ARG1(r) = sys_lseek((int)a[1], (int)a[2], (int)a[3]); break;
