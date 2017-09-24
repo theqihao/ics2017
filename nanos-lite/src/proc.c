@@ -29,6 +29,7 @@ void load_prog(const char *filename) {
 }
 
 static uint32_t flag = 0;
+bool current_game = 0;
 
 _RegSet* schedule(_RegSet *prev) {
 
@@ -45,11 +46,20 @@ _RegSet* schedule(_RegSet *prev) {
   // current = &pcb[0];
   // current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   flag++;
-  if (flag % 0x1000 == 0) {
-    current = &pcb[1];
+  if (current_game == 0) {
+    if (flag % 0x100 == 0) {
+      current = &pcb[1];
+    } else {
+      current = &pcb[0];
+    }
   } else {
-    current = &pcb[0];
+    if (flag % 0x100 == 0) {
+      current = &pcb[1];
+    } else {
+      current = &pcb[2];
+    }
   }
+
 
   // TODO: switch to the new address space,
   // then return the new context

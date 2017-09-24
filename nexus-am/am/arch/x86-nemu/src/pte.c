@@ -108,7 +108,7 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
   pi = pi - sizeof(_RegSet);
 
   _RegSet regs;
-  regs.eflags = 0x00000002;
+  regs.eflags = 0x00000202;
   regs.cs = 0x8;
   regs.eip = 0x8048000;
   regs.error_code = 0;

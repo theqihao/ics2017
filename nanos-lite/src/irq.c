@@ -14,12 +14,11 @@ am.h
 static _RegSet* do_event(_Event e, _RegSet* r) {
   switch (e.event) {
   	case _EVENT_SYSCALL: //printf("receive _EVENT_SYSCALL\n"); 
-  						do_syscall(r);  // break; printf("finish _EVENT_SYSCALL\n");
-  						return schedule(r); 
+  						do_syscall(r);
   						break;
   	case _EVENT_TRAP:  	// printf("receive _EVENT_TRAP\n"); 
   						return schedule(r); 
-  						break;
+  	case _EVENT_IRQ_TIME: /*Log("_EVENT_IRQ_TIME");*/ return schedule(r); 
     default: panic("Unhandled event ID = %d", e.event);
   }
 

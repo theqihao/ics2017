@@ -29,6 +29,8 @@ size_t events_read(void *buf, size_t len) {
 			} else {
 				keycode = keycode & ~KEYDOWN_MASK;
 				flag = 3;
+
+				if (keycode == _KEY_F12) current_game = !current_game;
 			}
 		}
 		memset(temp, '\0', sizeof(temp));
