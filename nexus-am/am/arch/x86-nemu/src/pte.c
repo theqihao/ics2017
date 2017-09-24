@@ -85,6 +85,43 @@ void _map(_Protect *p, void *va, void *pa) {
 void _unmap(_Protect *p, void *va) {
 }
 
+
+/*
+struct _RegSet {
+  uintptr_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+  int       irq;
+  uintptr_t error_code;
+  uintptr_t eip, cs, eflags;
+};
+*/
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
-  return NULL;
+  uintptr_t pi = (uintptr_t) ustack.end;
+
+  // _start()
+  pi -= 4; *(uintptr_t *)pi = 0; 
+  pi -= 4; *(uintptr_t *)pi = 0; 
+  pi -= 4; *(uintptr_t *)pi = 0; 
+  pi -= 4; *(uintptr_t *)pi = 0; 
+
+
+  // trap()
+  pi = pi - sizeof(_RegSet);
+
+  _RegSet regs;
+  regs.eflags = 0x00000002;
+  regs.cs = 0x8;
+  regs.eip = 0x8048000;
+  regs.error_code = 0;
+  regs.irq = 0;
+  regs.eax = 0;
+  regs.ecx = 0;
+  regs.edx = 0;
+  regs.ebx = 0;
+  regs.esp = 0;
+  regs.ebp = 0;
+  regs.esi = 0;
+  regs.edi = 0;
+
+  *(_RegSet *)pi = regs;
+  return (_RegSet *)pi;
 }

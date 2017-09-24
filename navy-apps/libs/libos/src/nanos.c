@@ -32,6 +32,7 @@ int _write(int fd, void *buf, size_t count){
   //_exit(SYS_write);
 }
 
+
 extern char end;
 void *_sbrk(intptr_t increment){
 
@@ -43,7 +44,7 @@ void *_sbrk(intptr_t increment){
   _syscall_(SYS_brk, new_pb, 0, 0);
   return (void *)old_pb;*/
 
-  static uintptr_t pb = &end;
+  static uintptr_t pb = (uint32_t)&end;
   uintptr_t old_pb = pb;
   if (_syscall_(SYS_brk, &pb, increment, 0) == 0) {
     return (void *)old_pb;

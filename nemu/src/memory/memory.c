@@ -79,7 +79,7 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
     if ((addr >> 12) != ((addr + len - 1) >> 12))
     {
-        printf("vaddr_write not align. cr0 = %08X\n", cpu.cr0);
+        //printf("vaddr_write not align. cr0 = %08X\n", cpu.cr0);
         int len1 = 4096 - (addr & 0xfff);
         int len2 = len - len1;
         vaddr_t addr1 = page_translate(addr);
