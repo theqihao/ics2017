@@ -60,6 +60,21 @@ make_EHelper(sar) {
   print_asm_template2(sar);
 }
 
+/*
+make_DHelper(Ib_G2E) {
+  decode_op_rm(eip, id_dest, true, id_src2, true);
+  id_src->width = 1;
+  decode_op_I(eip, id_src, true);
+}
+*/
+
+make_EHelper(shrd) {
+  //printf("dest = %08X, src1 = %08X, src2 = %08X\n", id_dest->val, id_src->val, id_src2->val);
+  t2 = (id_src2->val << id_src->val) | ((id_dest->val >> id_src->val) & 0xffff);
+  operand_write(id_dest, &t2);
+}
+
+
 make_EHelper(shl) {
   // TODO();
   // unnecessary to update CF and OF in NEMU

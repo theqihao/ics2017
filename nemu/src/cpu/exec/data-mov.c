@@ -109,6 +109,25 @@ make_EHelper(movzx) {
   print_asm_template2(movzx);
 }
 
+/*
+[SI] ---> [DI]
+*/
+make_EHelper(movs) {
+  if (decoding.is_operand_size_16) {
+    // TODO();
+    t2 = vaddr_read((cpu.esi & 0xffff), 2);
+    vaddr_write((cpu.edi & 0xffff), 2, t2);
+  }
+  else {
+    // TODO();
+    t2 = vaddr_read(cpu.esi, 4);
+    vaddr_write(cpu.edi, 4, t2);
+  }
+
+  print_asm(decoding.is_operand_size_16 ? "movsw" : "movsl");
+}
+
+
 make_EHelper(lea) {
   rtl_li(&t2, id_src->addr);
   operand_write(id_dest, &t2);

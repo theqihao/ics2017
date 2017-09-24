@@ -28,7 +28,7 @@ void load_prog(const char *filename) {
   printf("pcb addr = %08X, ptr = %08X\n", &pcb[i], pcb[i].as.ptr);
 }
 
-static uint32_t flag = 0;
+// static uint32_t flag = 0;
 bool current_game = 0;
 
 _RegSet* schedule(_RegSet *prev) {
@@ -43,22 +43,23 @@ _RegSet* schedule(_RegSet *prev) {
   current->tf = prev;
 
   // always select pcb[0] as the new process
-  // current = &pcb[0];
+  current = &pcb[0];
   // current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
-  flag++;
-  if (current_game == 0) {
-    if (flag % 0x100 == 0) {
-      current = &pcb[1];
-    } else {
-      current = &pcb[0];
-    }
-  } else {
-    if (flag % 0x100 == 0) {
-      current = &pcb[1];
-    } else {
-      current = &pcb[2];
-    }
-  }
+
+  // flag++;
+  // if (current_game == 0) {
+  //   if (flag % 0x100 == 0) {
+  //     current = &pcb[1];
+  //   } else {
+  //     current = &pcb[0];
+  //   }
+  // } else {
+  //   if (flag % 0x100 == 0) {
+  //     current = &pcb[1];
+  //   } else {
+  //     current = &pcb[2];
+  //   }
+  // }
 
 
   // TODO: switch to the new address space,
